@@ -12,10 +12,10 @@ export const StartButton = ({
 }: StartButtonProps) => {
   const name = hasStarted ? "Continue" : "Start";
   const usedClassNames = useMemo(() => {
-    const formIsFilledOut = names?.some((a) => !a.name.length);
+    const formIsFilledOut = !names?.some((a) => !a.name.length);
     const base = "button is-fullwidth ";
-    if (hasStarted) base + "is-success";
-    else if (formIsFilledOut) base + "is-danger is-outlined";
+    if (hasStarted) return base + "is-success is-outlined";
+    else if (formIsFilledOut) return base + "is-success";
     else return base;
   }, [hasStarted, names]);
   return (
