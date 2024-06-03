@@ -1,6 +1,7 @@
 import "bulma/css/bulma.min.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+import { History } from "./components/history";
 import { Input } from "./components/input";
 import { StartButton } from "./components/start-button";
 import { SuccessModal } from "./components/success-modal/success-modal.component";
@@ -17,6 +18,7 @@ enum Status {
 }
 function App() {
   const [names, setNames] = useState<NameWithNumber[]>([]);
+  const [drawnNames, setDrawnNames] = useState<NameWithNumber[]>([]);
   const [status, setStatus] = useState<Status>(Status.notStarted);
 
   const NameListComponent = useMemo(
@@ -67,6 +69,7 @@ function App() {
 
     const randomInList = Math.floor(Math.random() * names.length);
     const name = names[randomInList];
+    setDrawnNames([...drawnNames, name]);
     setNames([...names].filter((e) => e.number !== name.number));
 
     if (status === Status.notStarted) {
@@ -82,7 +85,7 @@ function App() {
       setNames([]);
       return;
     }
-  }, [names, status]);
+  }, [names, status, drawnNames]);
 
   useEffect(() => {
     if (status === Status.notStarted) return;
@@ -94,6 +97,7 @@ function App() {
   const handleOnHide = useCallback(() => {
     setStatus(Status.notStarted);
     setNames([]);
+    setDrawnNames([]);
   }, [names, status]);
 
   const subtitle = useMemo(() => {
@@ -111,23 +115,34 @@ function App() {
         isVisible={status === Status.finished}
         onHide={handleOnHide}
       />
-      <h1 className="title is-1">Tombola</h1>
-      <p className="subtitle">{subtitle}</p>
-      <div>{NameListComponent}</div>
+      <div
+        className="container flex flex-col w-[100vw] md:flex-row	gap-4"
+        style={{ flexGrow: 1 }}
+      >
+        <div className="flex-[2]">
+          <h1 className="title is-1">Tombola</h1>
+          <p className="subtitle">{subtitle}</p>
+          <div>{NameListComponent}</div>
 
-      <div className="flex flex-col gap-2 mt-2">
-        <button
-          className="button is-link is-fullwidth"
-          onClick={handleOnAdd}
-          disabled={[Status.inProgress, Status.finished].includes(status)}
-        >
-          Add
-        </button>
-        <StartButton
-          names={names}
-          hasStarted={[Status.inProgress, Status.finished].includes(status)}
-          onClick={handleOnPrimary}
-        />
+          <div className="flex flex-col gap-2 mt-2">
+            <button
+              className="button is-link is-fullwidth"
+              onClick={handleOnAdd}
+              disabled={[Status.inProgress, Status.finished].includes(status)}
+            >
+              Add
+            </button>
+            <StartButton
+              names={names}
+              hasStarted={[Status.inProgress, Status.finished].includes(status)}
+              onClick={handleOnPrimary}
+            />
+          </div>
+        </div>
+
+        <div className="flex-[1]">
+          <History names={drawnNames} />
+        </div>
       </div>
     </>
   );
