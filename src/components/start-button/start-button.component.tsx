@@ -15,7 +15,8 @@ export const StartButton = ({
     const formIsFilledOut = !names?.some((a) => !a.name.length);
     const base = "button is-fullwidth ";
     if (hasStarted) return base + "is-success is-outlined";
-    else if (formIsFilledOut) return base + "is-success";
+    else if (formIsFilledOut && (names ?? [])?.length > 1)
+      return base + "is-success";
     else return base;
   }, [hasStarted, names]);
   return (

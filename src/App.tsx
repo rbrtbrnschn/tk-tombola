@@ -62,7 +62,9 @@ function App() {
   }, [names]);
 
   const handleOnPrimary = useCallback(() => {
+    if (status === Status.notStarted && names.length <= 1) return;
     if (names.some((a) => !a.name.length)) return;
+
     const randomInList = Math.floor(Math.random() * names.length);
     const name = names[randomInList];
     setNames([...names].filter((e) => e.number !== name.number));
